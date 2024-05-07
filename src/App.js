@@ -40,15 +40,28 @@ function App() {
     e.preventDefault();
     try {
       const dataToSend = {
-        Marka: parseInt(formData.marka),
-        Seri: parseInt(formData.seri),
-        Model: parseInt(formData.model),
-        "Vites Tipi": parseInt(formData.vitestipi),
+        "Yıl": parseInt(formData.year),
+        "Model": parseInt(formData.model),
+        "Renk": parseInt(formData.renk),
+        "Boya-değişen": parseInt(formData.boyadegisen),
+        "Çekiş": parseInt(formData.cekis),
+        "Arka Tampon": parseInt(formData.arkatampon),
+        "Sağ Ön Çamurluk": parseInt(formData.sagoncamurluk),
+        "Sol Ön Çamurluk": parseInt(formData.soloncamurluk),
+        "Kilometre": parseInt(formData.kilometre),
+        "Marka": parseInt(formData.marka),
         "Yakıt Tipi": parseInt(formData.yakittipi),
+        "Vites Tipi": parseInt(formData.vitestipi),
         "Kasa Tipi": parseInt(formData.kasatipi),
-        Renk: parseInt(formData.renk),
-        Çekiş: parseInt(formData.cekis),
-        "Boya-değişen": parseInt(formData.boyadegisen)
+        "Ön Tampon": parseInt(formData.ontampon),
+        "Arka Kaput": parseInt(formData.arkakaput),
+        "Sol Arka Kapı": parseInt(formData.solarkakapi),
+        "Sol Ön Kapı": parseInt(formData.solonkapi),
+        "Sağ Ön Kapı": parseInt(formData.sagonkapi),
+        "Sağ Arka Kapı": parseInt(formData.sagarkakapi),
+        "Seri": parseInt(formData.seri),
+        "Sağ Arka Çamurluk": parseInt(formData.sagarkacamurluk),
+        "Sol Arka Çamurluk": parseInt(formData.solarakacamurluk)
       };
 
       const response = await fetch(config.carApiUrl, {
@@ -61,8 +74,12 @@ function App() {
           data: dataToSend,
         }),
       });
-      const data = await response.json();
-      console.log(data);
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+      } else {
+        console.error("Server error:", response.status);
+      }
     } catch (error) {
       console.error("Error:", error);
     }
