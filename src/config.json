@@ -1,3 +1,4 @@
 {
-    "carApiUrl": "https://carapi.bftsoft.uk/"
+    "carApiUrl": "https://carapi.bftsoft.uk/",
+    "api_key": "11111111111"
 }
