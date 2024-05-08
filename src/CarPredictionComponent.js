@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import config from "./config.json";
 
@@ -27,25 +27,125 @@ const CarPredictionComponent = () => {
   const [leftRearFender, setLeftRearFender] = useState("");
   const [prediction, setPrediction] = useState("");
 
+  const [transmissionOptions, setTransmissionOptions] = useState([]);
+  const [fuelTypeOptions, setFuelTypeOptions] = useState([]);
+  const [brandOptions, setBrandOptions] = useState([]);
+  const [seriesOptions, setSeriesOptions] = useState([]);
+  const [modelOptions, setModelOptions] = useState([]);
+  const [bodyTypeOptions, setBodyTypeOptions] = useState([]);
+  const [colorOptions, setColorOptions] = useState([]);
+  const [tractionOptions, setTractionOptions] = useState([]);
+  const [paintChangeOptions, setPaintChangeOptions] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(config.label_mapping_url)
+      .then((response) => {
+        if (response.data && response.data["Marka"]) {
+          const brandOptions = Object.entries(response.data["Marka"]).map(
+            ([label, value]) => ({ label, value })
+          );
+          setBrandOptions(brandOptions);
+        }
+
+        if (response.data && response.data["Seri"]) {
+          const seriesOptions = Object.entries(response.data["Seri"]).map(
+            ([label, value]) => ({ label, value })
+          );
+          setSeriesOptions(seriesOptions);
+        }
+
+        if (response.data && response.data["Model"]) {
+          const modelOptions = Object.entries(response.data["Model"]).map(
+            ([label, value]) => ({ label, value })
+          );
+          setModelOptions(modelOptions);
+        }
+
+        if (response.data && response.data["Vites Tipi"]) {
+          const transmissionOptions = Object.entries(
+            response.data["Vites Tipi"]
+          ).map(([label, value]) => ({ label, value }));
+          setTransmissionOptions(transmissionOptions);
+        }
+
+        if (response.data && response.data["Yakıt Tipi"]) {
+          const fuelTypeOptions = Object.entries(
+            response.data["Yakıt Tipi"]
+          ).map(([label, value]) => ({ label, value }));
+          setFuelTypeOptions(fuelTypeOptions);
+        }
+
+        if (response.data && response.data["Kasa Tipi"]) {
+          const bodyTypeOptions = Object.entries(
+            response.data["Kasa Tipi"]
+          ).map(([label, value]) => ({ label, value }));
+          setBodyTypeOptions(bodyTypeOptions);
+        }
+
+        if (response.data && response.data["Renk"]) {
+          const colorOptions = Object.entries(response.data["Renk"]).map(
+            ([label, value]) => ({ label, value })
+          );
+          setColorOptions(colorOptions);
+        }
+
+        if (response.data && response.data["Çekiş"]) {
+          const tractionOptions = Object.entries(response.data["Çekiş"]).map(
+            ([label, value]) => ({ label, value })
+          );
+          setTractionOptions(tractionOptions);
+        }
+
+        if (response.data && response.data["Boya-değişen"]) {
+          const paintChangeOptions = Object.entries(
+            response.data["Boya-değişen"]
+          ).map(([label, value]) => ({ label, value }));
+          setPaintChangeOptions(paintChangeOptions);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching transmission options:", error);
+      });
+  }, []);
+
   const handleChange = (setStateFunc) => (e) => {
     setStateFunc(e.target.value);
   };
+
+  const kmOptions = [];
+  for (let i = 0; i <= 1000000; i += 1000) {
+    kmOptions.push(
+      <option key={i} value={i}>
+        {i} km
+      </option>
+    );
+  }
+
+  const yearOptions = [];
+  for (let i = 2024; i >= 1940; i -= 1) {
+    yearOptions.push(
+      <option key={i} value={i}>
+        {i}
+      </option>
+    );
+  }
 
   const makePrediction = async () => {
     try {
       const response = await axios.post(config.carApiUrl, {
         api_key: config.api_key,
         data: {
-          Yıl: parseInt(year),
-          Model: parseInt(model),
-          Renk: parseInt(color),
+          "Yıl": parseInt(year),
+          "Model": parseInt(model),
+          "Renk": parseInt(color),
           "Boya-değişen": parseFloat(paintChange),
-          Çekiş: parseFloat(traction),
+          "Çekiş": parseFloat(traction),
           "Arka Tampon": parseFloat(rearBumper),
           "Sağ Ön Çamurluk": parseFloat(rightFrontFender),
           "Sol Ön Çamurluk": parseFloat(leftFrontFender),
-          Kilometre: parseInt(kilometers),
-          Marka: parseInt(brand),
+          "Kilometre": parseInt(kilometers),
+          "Marka": parseInt(brand),
           "Yakıt Tipi": parseFloat(fuelType),
           "Vites Tipi": parseFloat(transmissionType),
           "Kasa Tipi": parseFloat(bodyType),
@@ -55,7 +155,7 @@ const CarPredictionComponent = () => {
           "Sol Ön Kapı": parseFloat(leftFrontDoor),
           "Sağ Ön Kapı": parseFloat(rightFrontDoor),
           "Sağ Arka Kapı": parseFloat(rightRearDoor),
-          Seri: parseFloat(series),
+          "Seri": parseFloat(series),
           "Sağ Arka Çamurluk": parseFloat(rightRearFender),
           "Sol Arka Çamurluk": parseFloat(leftRearFender),
         },
@@ -71,153 +171,225 @@ const CarPredictionComponent = () => {
     <div>
       <div className="form">
         <div className="inputs">
-          <input
-            type="number"
-            value={brand}
-            onChange={handleChange(setBrand)}
-            placeholder="Marka"
-          />
+          <select value={brand} onChange={handleChange(setBrand)}>
+            <option value="">Marka</option>
+            {brandOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
 
-          <input
-            type="number"
-            value={series}
-            onChange={handleChange(setSeries)}
-            placeholder="Seri"
-          />
+          <select value={series} onChange={handleChange(setSeries)}>
+            <option value="">Seri</option>
+            {seriesOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
 
-          <input
-            type="number"
-            value={model}
-            onChange={handleChange(setModel)}
-            placeholder="Model"
-          />
+          <select value={model} onChange={handleChange(setModel)}>
+            <option value="">Model</option>
+            {modelOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
 
-          <input
-            type="number"
+          <select
             value={transmissionType}
             onChange={handleChange(setTransmissionType)}
-            placeholder="Vites Tipi"
-          />
+          >
+            <option value="">Vites Tipi</option>
+            {transmissionOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
 
-          <input
-            type="number"
-            value={fuelType}
-            onChange={handleChange(setFuelType)}
-            placeholder="Yakıt Tipi"
-          />
+          <select value={fuelType} onChange={handleChange(setFuelType)}>
+            <option value="">Yakıt Tipi</option>
+            {fuelTypeOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
 
-          <input
-            type="number"
-            value={bodyType}
-            onChange={handleChange(setBodyType)}
-            placeholder="Kasa Tipi"
-          />
+          <select value={bodyType} onChange={handleChange(setBodyType)}>
+            <option value="">Kasa Tipi</option>
+            {bodyTypeOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
 
-          <input
-            type="number"
-            value={color}
-            onChange={handleChange(setColor)}
-            placeholder="Renk"
-          />
+          <select value={color} onChange={handleChange(setColor)}>
+            <option value="">Renk</option>
+            {colorOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
 
-          <input
-            type="number"
-            value={traction}
-            onChange={handleChange(setTraction)}
-            placeholder="Çekiş Türü"
-          />
+          <select value={traction} onChange={handleChange(setTraction)}>
+            <option value="">Çekiş Türü</option>
+            {tractionOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
 
-          <input
-            type="number"
-            value={paintChange}
-            onChange={handleChange(setPaintChange)}
-            placeholder="Boya Değişim Miktarı"
-          />
+          <select value={paintChange} onChange={handleChange(setPaintChange)}>
+            <option value="">Boya Değişim Miktarı</option>
+            {paintChangeOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
 
-          <input
-            type="number"
-            value={kilometers}
-            onChange={handleChange(setKilometers)}
-            placeholder="Kilometre Bilgisi"
-          />
+          <select value={kilometers} onChange={handleChange(setKilometers)}>
+            <option value="">Kilometre(km)</option>
+            {kmOptions}
+          </select>
+          <select value={year} onChange={handleChange(setYear)}>
+            <option value="">Yıl</option>
+            {yearOptions}
+          </select>
 
-          <input
-            type="number"
-            value={year}
-            onChange={handleChange(setYear)}
-            placeholder="Yıl"
-          />
+          <select value={rearBumper} onChange={handleChange(setRearBumper)}>
+            <option value="">Arka Tampon Durumu Seçiniz</option>
+            <option value="0">Orjinal</option>
+            <option value="1">Local Boyalı</option>
+            <option value="2">Boyalı</option>
+            <option value="3">Değişmiş</option>
+            <option value="4">Belirtilmemiş</option>
+          </select>
 
-          <input
-            type="number"
-            value={rearBumper}
-            onChange={handleChange(setRearBumper)}
-            placeholder="Arka Tampon Durumu"
-          />
-          <input
-            type="number"
+          <select
             value={rightFrontFender}
             onChange={handleChange(setRightFrontFender)}
-            placeholder="Sağ Ön Çamurluk Durumu"
-          />
-          <input
-            type="number"
+          >
+            <option value="">Sağ Ön Çamurluk Durumu Seçiniz</option>
+            <option value="0">Orjinal</option>
+            <option value="1">Local Boyalı</option>
+            <option value="2">Boyalı</option>
+            <option value="3">Değişmiş</option>
+            <option value="4">Belirtilmemiş</option>
+          </select>
+
+          <select
             value={leftFrontFender}
             onChange={handleChange(setLeftFrontFender)}
-            placeholder="Sol Ön Çamurluk Durumu"
-          />
+          >
+            <option value="">Sol Ön Çamurluk Durumu Seçiniz</option>
+            <option value="0">Orjinal</option>
+            <option value="1">Local Boyalı</option>
+            <option value="2">Boyalı</option>
+            <option value="3">Değişmiş</option>
+            <option value="4">Belirtilmemiş</option>
+          </select>
 
-          <input
-            type="number"
-            value={frontBumper}
-            onChange={handleChange(setFrontBumper)}
-            placeholder="Ön Tampon Durumu"
-          />
-          <input
-            type="number"
-            value={rearHood}
-            onChange={handleChange(setRearHood)}
-            placeholder="Arka Kaput Durumu"
-          />
-          <input
-            type="number"
-            value={leftRearDoor}
-            onChange={handleChange(setLeftRearDoor)}
-            placeholder="Sol Arka Kapı Durumu"
-          />
-          <input
-            type="number"
+          <select value={frontBumper} onChange={handleChange(setFrontBumper)}>
+            <option value="">Ön Tampon Durumu Seçiniz</option>
+            <option value="0">Orjinal</option>
+            <option value="1">Local Boyalı</option>
+            <option value="2">Boyalı</option>
+            <option value="3">Değişmiş</option>
+            <option value="4">Belirtilmemiş</option>
+          </select>
+
+          <select value={rearHood} onChange={handleChange(setRearHood)}>
+            <option value="">Arka Kaput Durumu Seçiniz</option>
+            <option value="0">Orjinal</option>
+            <option value="1">Local Boyalı</option>
+            <option value="2">Boyalı</option>
+            <option value="3">Değişmiş</option>
+            <option value="4">Belirtilmemiş</option>
+          </select>
+
+          <select value={leftRearDoor} onChange={handleChange(setLeftRearDoor)}>
+            <option value="">Sol Arka Kapı Durumu Seçiniz</option>
+            <option value="0">Orjinal</option>
+            <option value="1">Local Boyalı</option>
+            <option value="2">Boyalı</option>
+            <option value="3">Değişmiş</option>
+            <option value="4">Belirtilmemiş</option>
+          </select>
+
+          <select
             value={leftFrontDoor}
             onChange={handleChange(setLeftFrontDoor)}
-            placeholder="Sol Ön Kapı Durumu"
-          />
-          <input
-            type="number"
+          >
+            <option value="">Sol Ön Kapı Durumu Seçiniz</option>
+            <option value="0">Orjinal</option>
+            <option value="1">Local Boyalı</option>
+            <option value="2">Boyalı</option>
+            <option value="3">Değişmiş</option>
+            <option value="4">Belirtilmemiş</option>
+          </select>
+
+          <select
             value={rightFrontDoor}
             onChange={handleChange(setRightFrontDoor)}
-            placeholder="Sağ Ön Kapı Durumu"
-          />
-          <input
-            type="number"
+          >
+            <option value="">Sağ Ön Kapı Durumu Seçiniz</option>
+            <option value="0">Orjinal</option>
+            <option value="1">Local Boyalı</option>
+            <option value="2">Boyalı</option>
+            <option value="3">Değişmiş</option>
+            <option value="4">Belirtilmemiş</option>
+          </select>
+
+          <select
             value={rightRearDoor}
             onChange={handleChange(setRightRearDoor)}
-            placeholder="Sağ Arka Kapı Durumu"
-          />
-          <input
-            type="number"
+          >
+            <option value="">Sağ Arka Kapı Durumu Seçiniz</option>
+            <option value="0">Orjinal</option>
+            <option value="1">Local Boyalı</option>
+            <option value="2">Boyalı</option>
+            <option value="3">Değişmiş</option>
+            <option value="4">Belirtilmemiş</option>
+          </select>
+
+          <select
             value={rightRearFender}
             onChange={handleChange(setRightRearFender)}
-            placeholder="Sağ Arka Çamurluk Durumu"
-          />
-          <input
-            type="number"
+          >
+            <option value="">Sağ Arka Çamurluk Durumu Seçiniz</option>
+            <option value="0">Orjinal</option>
+            <option value="1">Local Boyalı</option>
+            <option value="2">Boyalı</option>
+            <option value="3">Değişmiş</option>
+            <option value="4">Belirtilmemiş</option>
+          </select>
+
+          <select
             value={leftRearFender}
             onChange={handleChange(setLeftRearFender)}
-            placeholder="Sol Arka Çamurluk Durumu"
-          />
-          <button onClick={makePrediction}>Tahmin Yap</button>
+          >
+            <option value="">Sol Arka Çamurluk Durumu Seçiniz</option>
+            <option value="0">Orjinal</option>
+            <option value="1">Local Boyalı</option>
+            <option value="2">Boyalı</option>
+            <option value="3">Değişmiş</option>
+            <option value="4">Belirtilmemiş</option>
+          </select>
 
-          <div id="main-card">{prediction}</div>
+          <button onClick={makePrediction}>Hesapla</button>
+
+          <div className="result">
+              <div id="main-card"><b>{prediction}</b></div>
+          </div>
+
         </div>
       </div>
     </div>
