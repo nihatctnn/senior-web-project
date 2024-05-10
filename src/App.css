@@ -2,6 +2,12 @@ body {
   background-color: #f0f8ff;
 }
 
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
 .form {
   display: flex;
   background-color: #d4e3f7;
@@ -10,11 +16,15 @@ body {
   padding: 20px;
   border: 2px solid #ccc;
   border-radius: 5px;
-  width: 400px;
+  width: 40%;
+  max-width: 450px;
   margin: 40px auto;
+  margin-left: 15%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.form input, select {
+.form input,
+select {
   margin-bottom: 10px;
   padding: 8px;
   width: 100%;
@@ -31,6 +41,7 @@ body {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .form button:hover {
@@ -50,9 +61,44 @@ body {
   border-radius: 5px;
   padding: 10px;
   margin-top: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 100%; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  width: 100%;
   text-align: center;
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 16px;
+}
+
+.car-architecture-container {
+  position: relative;
+  display: inline-block;
+  width: 50%;
+  max-width: 50%;
+}
+
+.car-architecture {
+  width: 100%;
+  max-width: 60%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  display: block;
+  margin-top: 40px;
+  margin-right: 5%;
+  position: relative;
+}
+
+.parca {
+  position: absolute;
+  border: 0px solid black;
+  top: 30%;
+  left: 40%;
+}
+
+.parca.arka-tampon {
+  top: 506px;
+  left: 235px; 
+  transform: translate(-50%, -50%);
+  width: 150px; 
+  height: 7%; 
+  border-radius: 10px;
 }

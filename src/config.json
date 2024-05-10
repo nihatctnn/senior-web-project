@@ -1,5 +1,5 @@
 {
-    "carApiUrl": "https://carapi.bftsoft.uk/",
-    "label_mapping_url": "https://carapi.bftsoft.uk/get_labeL_mapping",
+    "carApiUrl": "https://api.otoeder.com/",
+    "label_mapping_url": "https://api.otoeder.com/get_labeL_mapping",
     "api_key": "11111111111"
 }

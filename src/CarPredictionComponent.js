@@ -3,6 +3,7 @@ import axios from "axios";
 import config from "./config.json";
 
 const CarPredictionComponent = () => {
+
   const [year, setYear] = useState("");
   const [model, setModel] = useState("");
   const [color, setColor] = useState("");
@@ -113,6 +114,31 @@ const CarPredictionComponent = () => {
     setStateFunc(e.target.value);
   };
 
+  // Arka kaput rengini ayarlayacak fonksiyon
+  const handleRearBumperChange = (e) => {
+    const selectedValue = e.target.value;
+    setRearBumper(getRearBumperColor(selectedValue));
+  };
+
+// Seçilen değere göre arka kaput rengini döndüren yardımcı fonksiyon
+const getRearBumperColor = (color) => {
+  switch (color) {
+    case "0":
+      return "rgba(0, 128, 0, 0.5)"; // green
+    case "1":
+      return "rgba(255, 255, 224, 0.5)"; // lightyellow
+    case "2":
+      return "rgba(255, 140, 0, 0.5)"; // darkorange
+    case "3":
+      return "rgba(255, 0, 0, 0.5)"; // red
+    case "4":
+      return "rgba(128, 128, 128, 0.5)"; // gray
+    default:
+      return "rgba(0, 0, 0, 0.5)"; // Default transparent color
+  }
+};
+
+
   const kmOptions = [];
   for (let i = 0; i <= 1000000; i += 1000) {
     kmOptions.push(
@@ -168,7 +194,7 @@ const CarPredictionComponent = () => {
   };
 
   return (
-    <div>
+    <div className="form-container">
       <div className="form">
         <div className="inputs">
           <select value={brand} onChange={handleChange(setBrand)}>
@@ -240,15 +266,6 @@ const CarPredictionComponent = () => {
           <select value={traction} onChange={handleChange(setTraction)}>
             <option value="">Çekiş Türü</option>
             {tractionOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-
-          <select value={paintChange} onChange={handleChange(setPaintChange)}>
-            <option value="">Boya Değişim Miktarı</option>
-            {paintChangeOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -384,13 +401,47 @@ const CarPredictionComponent = () => {
             <option value="4">Belirtilmemiş</option>
           </select>
 
+          <select value={paintChange} onChange={handleChange(setPaintChange)}>
+            <option value="">Boya Değişim Miktarı</option>
+            {paintChangeOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+
           <button onClick={makePrediction}>Hesapla</button>
 
           <div className="result">
-              <div id="main-card"><b>{prediction}</b></div>
+            <div id="main-card">
+              <b>{prediction}</b>
+            </div>
           </div>
-
         </div>
+      </div>
+
+      <div className="car-architecture-container">
+        <img
+          src="./images/car-arch.jpg"
+          alt="car-architecture"
+          className="car-architecture"
+        />
+
+        <div
+          className="parca arka-tampon"
+          style={{ backgroundColor: getRearBumperColor(rearBumper) }}
+        ></div>
+
+        <div className="parca sag-on-camurluk"></div>
+        <div className="parca sol-on-camurluk"></div>
+        <div className="parca on-tampon"></div>
+        <div className="parca arka-kaput"></div>
+        <div className="parca sol-arka-kapi"></div>
+        <div className="parca sol-on-kapi"></div>
+        <div className="parca sag-on-kapi"></div>
+        <div className="parca sag-arka-kapi"></div>
+        <div className="parca sag-arka-camurluk"></div>
+        <div className="parca sol-arka-camurluk"></div>
       </div>
     </div>
   );
