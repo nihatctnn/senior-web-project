@@ -20,6 +20,7 @@ body {
   max-width: 450px;
   margin: 40px auto;
   margin-left: 15%;
+  margin-right: 10%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -29,6 +30,7 @@ select {
   padding: 8px;
   width: 100%;
   box-sizing: border-box;
+  border-radius: 5px;
 }
 
 .form button {
@@ -76,7 +78,7 @@ select {
 }
 
 .car-architecture {
-  width: 100%;
+  width: 70%;
   max-width: 60%;
   height: auto;
   border-radius: 10px;
@@ -91,14 +93,167 @@ select {
   position: absolute;
   border: 0px solid black;
   top: 30%;
-  left: 40%;
+  left: 50%;
 }
 
 .parca.arka-tampon {
-  top: 506px;
-  left: 235px; 
+  top: 464px;
+  left: 215px; 
   transform: translate(-50%, -50%);
-  width: 150px; 
+  width: 140px; 
+  height: 4%; 
+  border-radius: 10px;
+}
+
+.parca.arka-kaput {
+  top: 400px;
+  left: 213px; 
+  transform: translate(-50%, -50%);
+  width: 100px; 
   height: 7%; 
+  border-radius: 10px;
+}
+
+.parca.on-tampon {
+  top: 95px;
+  left: 214px; 
+  transform: translate(-50%, -50%);
+  width: 138px; 
+  height: 7%; 
+  border-radius: 10px;
+}
+
+.parca.sag-on-camurluk {
+  top: 190px;
+  left: 345px; 
+  transform: translate(-50%, -50%);
+  width: 55px; 
+  height: 11%; 
+  border-radius: 10px;
+}
+
+.parca.sol-on-camurluk {
+  top: 190px;
+  left: 85px; 
+  transform: translate(-50%, -50%);
+  width: 55px; 
+  height: 11%; 
+  border-radius: 10px;
+}
+
+.parca.sol-on-kapi {
+  top: 270px;
+  left: 105px; 
+  transform: translate(-50%, -50%);
+  width: 80px; 
+  height: 7%; 
+  border-radius: 10px;
+}
+
+.parca.sol-arka-kapi {
+  top: 332px;
+  left: 105px; 
+  transform: translate(-50%, -50%);
+  width: 80px; 
+  height: 10%; 
+  border-radius: 10px;
+}
+
+.parca.sag-on-kapi {
+  top: 270px;
+  left: 330px; 
+  transform: translate(-50%, -50%);
+  width: 80px; 
+  height: 12%; 
+  border-radius: 10px;
+}
+
+.parca.sag-arka-kapi {
+  top: 332px;
+  left: 330px; 
+  transform: translate(-50%, -50%);
+  width: 80px; 
+  height: 10%; 
+  border-radius: 10px;
+}
+
+.parca.sag-arka-camurluk {
+  top: 390px;
+  left: 330px; 
+  transform: translate(-50%, -50%);
+  width: 80px; 
+  height: 5%; 
+  border-radius: 10px;
+}
+
+.parca.sol-arka-camurluk {
+  top: 390px;
+  left: 105px; 
+  transform: translate(-50%, -50%);
+  width: 80px; 
+  height: 5%; 
+  border-radius: 10px;
+}
+
+.definition {
+  background-color: white;
+  width: 70%;
+  max-width: 60%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  display: block;
+  margin-top: 40px;
+}
+
+.definition>ul>li {
+  position: relative;
+  padding-left: 5px;
+}
+
+.definition>ul>li:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+#original {
+  color: green;
+}
+
+#local {
+  color: yellow;
+}
+
+#painted {
+  color: darkorange;
+}
+
+#changed {
+  color: red;
+}
+
+#undefined {
+  color: gray;
+}
+
+.caro {
+  max-width: 85%;
+  margin: 0 auto; 
+}
+
+.carousel-inner {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: auto;
   border-radius: 10px;
 }

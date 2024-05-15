@@ -3,7 +3,6 @@ import axios from "axios";
 import config from "./config.json";
 
 const CarPredictionComponent = () => {
-
   const [year, setYear] = useState("");
   const [model, setModel] = useState("");
   const [color, setColor] = useState("");
@@ -109,36 +108,30 @@ const CarPredictionComponent = () => {
         console.error("Error fetching transmission options:", error);
       });
   }, []);
+  
 
   const handleChange = (setStateFunc) => (e) => {
     setStateFunc(e.target.value);
   };
 
-  // Arka kaput rengini ayarlayacak fonksiyon
-  const handleRearBumperChange = (e) => {
-    const selectedValue = e.target.value;
-    setRearBumper(getRearBumperColor(selectedValue));
+  const getPartColor = (part, color) => {
+    switch (color) {
+      case "0":
+        return "rgba(0, 128, 0, 0.3)"; // green
+      case "1":
+        return "rgba(255, 255, 224, 0.9)"; // lightyellow
+      case "2":
+        return "rgba(255, 140, 0, 0.3)"; // darkorange
+      case "3":
+        return "rgba(255, 0, 0, 0.5)"; // red
+      case "4":
+        return "rgba(128, 128, 128, 0.7)"; // gray
+      default:
+        return "rgba(0, 0, 0, 0)"; // Default transparent color
+    }
   };
 
-// Seçilen değere göre arka kaput rengini döndüren yardımcı fonksiyon
-const getRearBumperColor = (color) => {
-  switch (color) {
-    case "0":
-      return "rgba(0, 128, 0, 0.5)"; // green
-    case "1":
-      return "rgba(255, 255, 224, 0.5)"; // lightyellow
-    case "2":
-      return "rgba(255, 140, 0, 0.5)"; // darkorange
-    case "3":
-      return "rgba(255, 0, 0, 0.5)"; // red
-    case "4":
-      return "rgba(128, 128, 128, 0.5)"; // gray
-    default:
-      return "rgba(0, 0, 0, 0.5)"; // Default transparent color
-  }
-};
-
-
+  
   const kmOptions = [];
   for (let i = 0; i <= 1000000; i += 1000) {
     kmOptions.push(
@@ -429,20 +422,125 @@ const getRearBumperColor = (color) => {
 
         <div
           className="parca arka-tampon"
-          style={{ backgroundColor: getRearBumperColor(rearBumper) }}
+          style={{ backgroundColor: getPartColor("rearBumper", rearBumper) }}
         ></div>
 
-        <div className="parca sag-on-camurluk"></div>
-        <div className="parca sol-on-camurluk"></div>
-        <div className="parca on-tampon"></div>
-        <div className="parca arka-kaput"></div>
-        <div className="parca sol-arka-kapi"></div>
-        <div className="parca sol-on-kapi"></div>
-        <div className="parca sag-on-kapi"></div>
-        <div className="parca sag-arka-kapi"></div>
-        <div className="parca sag-arka-camurluk"></div>
-        <div className="parca sol-arka-camurluk"></div>
+        <div
+          className="parca sag-on-camurluk"
+          style={{
+            backgroundColor: getPartColor("rightFrontFender", rightFrontFender),
+          }}
+        ></div>
+
+        <div
+          className="parca sol-on-camurluk"
+          style={{
+            backgroundColor: getPartColor("leftFrontFender", leftFrontFender),
+          }}
+        ></div>
+
+        <div
+          className="parca on-tampon"
+          style={{ backgroundColor: getPartColor("frontBumper", frontBumper) }}
+        ></div>
+
+        <div
+          className="parca arka-kaput" 
+          style={{ backgroundColor: getPartColor("rearHood", rearHood) }}>
+        </div>
+        
+        <div
+          className="parca sol-arka-kapi"
+          style={{ backgroundColor: getPartColor("leftRearDoor", leftRearDoor) }}
+        ></div>
+
+        <div
+          className="parca sol-on-kapi"
+          style={{ backgroundColor: getPartColor("leftFrontDoor", leftFrontDoor) }}
+        ></div>
+
+        <div
+          className="parca sag-on-kapi"
+          style={{
+            backgroundColor: getPartColor("rightFrontDoor", rightFrontDoor),
+          }}
+        ></div>
+
+        <div
+          className="parca sag-arka-kapi"
+          style={{
+            backgroundColor: getPartColor("rightRearDoor", rightRearDoor),
+          }}
+        ></div>
+
+        <div
+          className="parca sag-arka-camurluk"
+          style={{
+            backgroundColor: getPartColor("rightRearFender", rightRearFender),
+          }}
+        ></div>
+
+        <div
+          className="parca sol-arka-camurluk"
+          style={{
+            backgroundColor: getPartColor("leftRearFender", leftRearFender),
+          }}
+        ></div>
+
+        <div className="definition">
+          <ul>
+            <li id="original"><b>Orjinal</b></li>
+            <li id="local"><b>Local Boyalı</b></li>
+            <li id="painted"><b>Boyalı</b></li>
+            <li id="changed"><b>Değişmiş</b></li>
+            <li id="undefined"><b>Belirtilmemiş</b></li>
+          </ul>
+        </div>
+
+        <div className="definition">
+                  <div class="accordion" id="accordionPanelsStayOpenExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                  Accordion Item #1
+                </button>
+              </h2>
+              <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+                <div class="accordion-body">
+                  <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                  Accordion Item #2
+                </button>
+              </h2>
+              <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                <div class="accordion-body">
+                  <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                  Accordion Item #3
+                </button>
+              </h2>
+              <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                <div class="accordion-body">
+                  <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+
       </div>
+
     </div>
   );
 };
