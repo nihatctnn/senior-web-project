@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import config from "./config.json";
+import AutoComplete from "./AutoComplete";
 
 const CarPredictionComponent = () => {
+
   const [year, setYear] = useState("");
   const [model, setModel] = useState("");
   const [color, setColor] = useState("");
@@ -12,7 +14,6 @@ const CarPredictionComponent = () => {
   const [rightFrontFender, setRightFrontFender] = useState("");
   const [leftFrontFender, setLeftFrontFender] = useState("");
   const [kilometers, setKilometers] = useState("");
-  const [brand, setBrand] = useState("");
   const [fuelType, setFuelType] = useState("");
   const [transmissionType, setTransmissionType] = useState("");
   const [bodyType, setBodyType] = useState("");
@@ -22,20 +23,23 @@ const CarPredictionComponent = () => {
   const [leftFrontDoor, setLeftFrontDoor] = useState("");
   const [rightFrontDoor, setRightFrontDoor] = useState("");
   const [rightRearDoor, setRightRearDoor] = useState("");
-  const [series, setSeries] = useState("");
   const [rightRearFender, setRightRearFender] = useState("");
   const [leftRearFender, setLeftRearFender] = useState("");
   const [prediction, setPrediction] = useState("");
-
   const [transmissionOptions, setTransmissionOptions] = useState([]);
   const [fuelTypeOptions, setFuelTypeOptions] = useState([]);
-  const [brandOptions, setBrandOptions] = useState([]);
-  const [seriesOptions, setSeriesOptions] = useState([]);
   const [modelOptions, setModelOptions] = useState([]);
   const [bodyTypeOptions, setBodyTypeOptions] = useState([]);
   const [colorOptions, setColorOptions] = useState([]);
   const [tractionOptions, setTractionOptions] = useState([]);
   const [paintChangeOptions, setPaintChangeOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const [brandOptions, setBrandOptions] = useState([]);
+  const [brand, setBrand] = useState("");
+  const [seriesOptions, setSeriesOptions] = useState([]);
+  const [series, setSeries] = useState("");
+
 
   useEffect(() => {
     axios
@@ -108,7 +112,6 @@ const CarPredictionComponent = () => {
         console.error("Error fetching transmission options:", error);
       });
   }, []);
-  
 
   const handleChange = (setStateFunc) => (e) => {
     setStateFunc(e.target.value);
@@ -131,26 +134,8 @@ const CarPredictionComponent = () => {
     }
   };
 
-  
-  const kmOptions = [];
-  for (let i = 0; i <= 1000000; i += 1000) {
-    kmOptions.push(
-      <option key={i} value={i}>
-        {i} km
-      </option>
-    );
-  }
-
-  const yearOptions = [];
-  for (let i = 2024; i >= 1940; i -= 1) {
-    yearOptions.push(
-      <option key={i} value={i}>
-        {i}
-      </option>
-    );
-  }
-
   const makePrediction = async () => {
+    setLoading(true);
     try {
       const response = await axios.post(config.carApiUrl, {
         api_key: config.api_key,
@@ -183,6 +168,8 @@ const CarPredictionComponent = () => {
       setPrediction(response.data.prediction);
     } catch (error) {
       console.error("Error making prediction:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -190,32 +177,27 @@ const CarPredictionComponent = () => {
     <div className="form-container">
       <div className="form">
         <div className="inputs">
-          <select value={brand} onChange={handleChange(setBrand)}>
-            <option value="">Marka</option>
-            {brandOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
 
-          <select value={series} onChange={handleChange(setSeries)}>
-            <option value="">Seri</option>
-            {seriesOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          <AutoComplete
+            options={brandOptions}
+            value={brand}
+            onChange={handleChange(setBrand)}
+            placeholder="Marka"
+          />
 
-          <select value={model} onChange={handleChange(setModel)}>
-            <option value="">Model</option>
-            {modelOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          <AutoComplete
+            options={seriesOptions}
+            value={series}
+            onChange={handleChange(setSeries)}
+            placeholder="Seri"
+          />
+
+          <AutoComplete
+            options={modelOptions}
+            value={model}
+            onChange={handleChange(setModel)}
+            placeholder="Model"
+          />
 
           <select
             value={transmissionType}
@@ -265,14 +247,21 @@ const CarPredictionComponent = () => {
             ))}
           </select>
 
-          <select value={kilometers} onChange={handleChange(setKilometers)}>
-            <option value="">Kilometre(km)</option>
-            {kmOptions}
-          </select>
-          <select value={year} onChange={handleChange(setYear)}>
-            <option value="">Yıl</option>
-            {yearOptions}
-          </select>
+          <input
+            placeholder="Kilometre (km)"
+            type="number"
+            id="kilometers"
+            value={kilometers}
+            onChange={handleChange(setKilometers)}
+          />
+
+          <input
+            placeholder="Yıl"
+            type="number"
+            id="year"
+            value={year}
+            onChange={handleChange(setYear)}
+          />
 
           <select value={rearBumper} onChange={handleChange(setRearBumper)}>
             <option value="">Arka Tampon Durumu Seçiniz</option>
@@ -405,11 +394,19 @@ const CarPredictionComponent = () => {
 
           <button onClick={makePrediction}>Hesapla</button>
 
-          <div className="result">
-            <div id="main-card">
-              <b>{prediction}</b>
+          {loading && (
+            <div className="loader">
+              <span>Loading...</span>
             </div>
-          </div>
+          )}
+
+          {prediction && (
+            <div className="result">
+              <div id="main-card">
+                <b>{prediction}</b>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -445,18 +442,22 @@ const CarPredictionComponent = () => {
         ></div>
 
         <div
-          className="parca arka-kaput" 
-          style={{ backgroundColor: getPartColor("rearHood", rearHood) }}>
-        </div>
-        
+          className="parca arka-kaput"
+          style={{ backgroundColor: getPartColor("rearHood", rearHood) }}
+        ></div>
+
         <div
           className="parca sol-arka-kapi"
-          style={{ backgroundColor: getPartColor("leftRearDoor", leftRearDoor) }}
+          style={{
+            backgroundColor: getPartColor("leftRearDoor", leftRearDoor),
+          }}
         ></div>
 
         <div
           className="parca sol-on-kapi"
-          style={{ backgroundColor: getPartColor("leftFrontDoor", leftFrontDoor) }}
+          style={{
+            backgroundColor: getPartColor("leftFrontDoor", leftFrontDoor),
+          }}
         ></div>
 
         <div
@@ -489,58 +490,168 @@ const CarPredictionComponent = () => {
 
         <div className="definition">
           <ul>
-            <li id="original"><b>Orjinal</b></li>
-            <li id="local"><b>Local Boyalı</b></li>
-            <li id="painted"><b>Boyalı</b></li>
-            <li id="changed"><b>Değişmiş</b></li>
-            <li id="undefined"><b>Belirtilmemiş</b></li>
+            <li id="original">
+              <b>Orjinal</b>
+            </li>
+            <li id="local">
+              <b>Local Boyalı</b>
+            </li>
+            <li id="painted">
+              <b>Boyalı</b>
+            </li>
+            <li id="changed">
+              <b>Değişmiş</b>
+            </li>
+            <li id="undefined">
+              <b>Belirtilmemiş</b>
+            </li>
           </ul>
         </div>
 
         <div className="definition">
-                  <div class="accordion" id="accordionPanelsStayOpenExample">
+          <div class="accordion" id="accordionPanelsStayOpenExample">
             <div class="accordion-item">
               <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
-                  Accordion Item #1
+                <button
+                  class="accordion-button"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#panelsStayOpen-collapseOne"
+                  aria-expanded="true"
+                  aria-controls="panelsStayOpen-collapseOne"
+                >
+                  Oto Eder Nedir ?
                 </button>
               </h2>
-              <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+              <div
+                id="panelsStayOpen-collapseOne"
+                class="accordion-collapse collapse show"
+                aria-labelledby="panelsStayOpen-headingOne"
+              >
                 <div class="accordion-body">
-                  <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                  Oto Eder, aracınızın piyasa değerini belirlemek için
+                  tasarlanmış yapay zeka destekli bir web uygulamasıdır. Bu
+                  uygulama, aracınızın marka, model, üretim yılı, kilometre ve
+                  renk gibi temel bilgilerini toplar. Bunun yanı sıra, aracın
+                  kaza geçmişi, boya değişiklikleri, çekiş durumu ve diğer
+                  önemli özellikleri de değerlendirilir. Tüm bu veriler, yapay
+                  zeka algoritmaları ile analiz edilerek aracınızın güncel
+                  piyasa değeri hesaplanır. Oto Eder, hem alıcılar hem de
+                  satıcılar için doğru ve güvenilir değer tespiti sağlayarak,
+                  ikinci el araç alım satım süreçlerini kolaylaştırır ve daha
+                  bilinçli kararlar alınmasına yardımcı olur.
                 </div>
               </div>
             </div>
             <div class="accordion-item">
               <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
-                  Accordion Item #2
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#panelsStayOpen-collapseTwo"
+                  aria-expanded="false"
+                  aria-controls="panelsStayOpen-collapseTwo"
+                >
+                  Oto Eder Nasıl Kullanılır ?
                 </button>
               </h2>
-              <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+              <div
+                id="panelsStayOpen-collapseTwo"
+                class="accordion-collapse collapse"
+                aria-labelledby="panelsStayOpen-headingTwo"
+              >
                 <div class="accordion-body">
-                  <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                  Oto Eder'i kullanmak oldukça basittir. İşte adım adım nasıl
+                  kullanacağınız:
+                  <ol>
+                    <li>
+                      <strong>Marka Seçimi:</strong> İlk olarak, aracınızın
+                      markasını seçin. Bu seçenek, uygulamanın doğru tahminlerde
+                      bulunabilmesi için gereklidir.
+                    </li>
+                    <li>
+                      <strong>Seri ve Model Seçimi:</strong> Aracınızın seri ve
+                      modelini seçin. Bu bilgiler, aracınızın piyasa değerini
+                      belirlemede önemli rol oynar.
+                    </li>
+                    <li>
+                      <strong>Üretim Yılı:</strong> Aracınızın üretim yılını
+                      belirtin. Aracınızın yaşı, piyasa değerini doğrudan
+                      etkileyen faktörlerden biridir.
+                    </li>
+                    <li>
+                      <strong>Yakıt Tipi:</strong> Aracınızın yakıt tipini
+                      seçin. Benzin, dizel, elektrikli gibi seçenekler arasından
+                      doğru olanı belirtin.
+                    </li>
+                    <li>
+                      <strong>Vites Tipi:</strong> Aracınızın vites tipini
+                      seçin. Manuel, otomatik gibi vites seçenekleri arasından
+                      aracınıza uygun olanı seçin.
+                    </li>
+                    <li>
+                      <strong>Kasa Tipi:</strong> Aracınızın kasa tipini seçin.
+                      Sedan, hatchback, SUV gibi kasa tipleri arasından seçim
+                      yapın.
+                    </li>
+                    <li>
+                      <strong>Renk:</strong> Aracınızın rengini belirtin. Bu
+                      bilgi, aracınızın estetik değeri ve piyasa fiyatı üzerinde
+                      etkili olabilir.
+                    </li>
+                    <li>
+                      <strong>Kilometre:</strong> Aracınızın mevcut
+                      kilometresini girin. Kilometre bilgisi, aracın kullanım
+                      durumu ve değerini etkiler.
+                    </li>
+                    <li>
+                      <strong>Diğer Bilgiler:</strong> Aracınızın kaza geçmişi,
+                      boya değişiklikleri ve diğer önemli özelliklerini
+                      belirtin.
+                    </li>
+                    <li>
+                      <strong>Hesapla:</strong> Tüm bilgileri girdikten
+                      sonra, "Hesapla" butonuna tıklayın. Oto Eder, yapay
+                      zeka algoritmaları ile verilerinizi analiz edecek ve
+                      aracınızın piyasa değerini size sunacaktır.
+                    </li>
+                  </ol>
+                  Bu adımları takip ederek, aracınızın güncel piyasa değerini
+                  hızlı ve güvenilir bir şekilde öğrenebilirsiniz.
                 </div>
               </div>
             </div>
             <div class="accordion-item">
               <h2 class="accordion-header" id="panelsStayOpen-headingThree">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
-                  Accordion Item #3
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#panelsStayOpen-collapseThree"
+                  aria-expanded="false"
+                  aria-controls="panelsStayOpen-collapseThree"
+                >
+                  Oto Eder Güncel Mi ?
                 </button>
               </h2>
-              <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+              <div
+                id="panelsStayOpen-collapseThree"
+                class="accordion-collapse collapse"
+                aria-labelledby="panelsStayOpen-headingThree"
+              >
                 <div class="accordion-body">
-                  <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                Evet, Oto Eder sürekli olarak güncellenen bir uygulamadır. Aracınızın piyasa değerini en doğru şekilde belirlemek için, Oto Eder sürekli olarak piyasadaki fiyat değişimlerini, yeni modelleri ve güncel verileri takip eder. Bu sayede, Oto Eder aracınızın piyasa değerini güncel verilerle hesaplayarak size en doğru sonuçları sunar. 
+
+                Oto Eder'in yapay zeka algoritmaları, büyük veri setlerini analiz ederek ve trendleri takip ederek en doğru ve güvenilir değer tespitini sağlar. Aracınızın değerini hesaplarken, güncel piyasa koşullarını, ekonomik faktörleri ve otomobil sektöründeki değişiklikleri dikkate alır. Böylece, Oto Eder ile her zaman güncel ve doğru bilgiye ulaşabilirsiniz.
+
                 </div>
               </div>
             </div>
-            
           </div>
         </div>
 
       </div>
-
     </div>
   );
 };
